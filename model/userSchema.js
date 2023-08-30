@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     password:'String',
     address:'String',
     location:'String',
-    images:[],
+    images:[{type:'Array'}],
     cart:[{
 
 
