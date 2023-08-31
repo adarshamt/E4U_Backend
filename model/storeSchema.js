@@ -10,6 +10,7 @@ const storeSchema =  new mongoose.Schema({
     password:'String',
     address:'String',
     location:'String',
+    image:[{type:'Array'}],
     cart:[{
 
 
