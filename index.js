@@ -37,6 +37,9 @@ mongoose
   const storeRouter = require('./routes/storeRoutes')
   app.use(storeRouter)
 
+  const productRouter = require('./model/productSchema')
+  app.use(productRouter)
+
 
 
 
