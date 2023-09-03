@@ -7,12 +7,21 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const morgan = require('morgan')
 
+const fileUpload = require('express-fileupload') 
 
 
+app.use(fileUpload({
+  useTempFiles : true
+
+  
+  }))
 
 app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
+
+
+
 mongoose
   .connect("mongodb://127.0.0.1:27017/E4U_DataBase", {
     useNewUrlParser: true,
