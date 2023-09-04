@@ -10,16 +10,16 @@ const morgan = require('morgan')
 const fileUpload = require('express-fileupload') 
 
 
-app.use(fileUpload({
-  useTempFiles : true
-
-  
-  }))
-
 app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 
+
+// app.use(fileUpload({
+//   useTempFiles : true
+
+  
+//   }))
 
 
 mongoose
@@ -33,11 +33,11 @@ mongoose
     console.log(err);
   });
 
-  app.set("vie engine","ejs")
+  
 
-  app.get("/upload",(req,res)=>{
-    res.render("image upload")
-  })
+  // app.get("/upload",(req,res)=>{
+  //   res.render("image upload")
+  // })
 
   const userRouter= require('./routes/userRoutes')
   app.use(userRouter)

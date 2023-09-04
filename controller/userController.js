@@ -15,14 +15,15 @@ const userRegistraion= async(req,res)=>{
         //  console.log("req files",req.file)
     const {name,username,phone,email,password,address,location}=req.body
 
-    console.log("req name",name)
+    console.log("req name",name) 
+    console.log("req files",req.file)
 
     const hashedPassword = await bcrypt.hash(password,10)
     
     
     
     const newUser= new user ({name:name,username:username,password:hashedPassword,email:email,
-                               phoneNumber:phone,address:address,location:location,images:req.files})
+                               phoneNumber:phone,address:address,location:location,images:req.file})
                                 
     //   const {path} = req.file                         
     //  user.images.push(req.file  )

@@ -12,8 +12,8 @@ const upload = require("../middlware/fileupload.js")
 
 
 
-router.post("/store/registraion",upload.array('images',5),storeRegistration)
-router.post("/store/userowner",addproduct)
+router.post("/store/registraion",upload.single('images'),storeRegistration)
+router.post("/store/addproduct",upload.array('images',5),addproduct)
 
 
 

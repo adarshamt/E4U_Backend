@@ -8,7 +8,7 @@ const upload = require('../middlware/fileupload')
 
 
 
-router.post('/user/registraion',upload.array('images',5),user.userRegistraion)
+router.post('/user/registraion',upload.single('images'),user.userRegistraion)
 router.post('/user/login',user.login)
 
 

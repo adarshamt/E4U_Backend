@@ -2,7 +2,7 @@
 
 const multer = require('multer')
 
-console.log("multer ")
+console.log("multer")
 
 const upload = multer({
     storage: multer.diskStorage({
