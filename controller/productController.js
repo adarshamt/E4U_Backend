@@ -5,13 +5,7 @@ const productSchema = require("../model/productSchema")
 const fs = require('fs')
 
 
-// cloudinary.config({ 
-//      cloud_name: 'dcy1nhstg', 
-//      api_key: '359642551777749', 
-//      api_secret: 'ochqSnaOORPVryrlm9q0oFPEXRU' 
-//    }); 
-//   
-// ********** addd product ***********
+
 
 const addproduct = async (req,res)=>
 
@@ -43,11 +37,7 @@ const addproduct = async (req,res)=>
                     }
 
                     
-               //      res.status(200).json({
-                         
-               //           message : "image uploaded sussesfull",  
-               //               data:urls
-               // })
+               
 
                     const product = new productSchema ({
                       productName,
