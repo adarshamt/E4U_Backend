@@ -18,10 +18,11 @@ exports.uploads =(file,folder)=>{
 
     return new Promise(resolve =>{
         cloudinary.uploader.upload(file,(result)=>{
-          console.log("clodinary result",result)
+          // console.log("clodinary result",result)
             resolve({
                url:result.url,
-                 id:result.public_id })
+                //  id:result.public_id 
+                })
             },{
 
             resourse_type : "auto",

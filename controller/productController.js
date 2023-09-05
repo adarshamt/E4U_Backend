@@ -16,18 +16,17 @@ const fs = require('fs')
 const addproduct = async (req,res)=>
 
      {
+          let urls= []
 
         try{
                const {productName,discription,price,category} = req.body
                  console.log("product name",productName)
 
-                console.log("req files",req.files)
 
                  const uploader = async ( path)=> await cloudinary.uploads(path,'images')
-                 
                  if ( req.method == "POST"){
 
-                    const urls =[]
+                    
                     const files = req.files
                     
                     for ( const file of files ){
@@ -44,73 +43,42 @@ const addproduct = async (req,res)=>
                     }
 
                     
-                    res.status(200).json({
+               //      res.status(200).json({
                          
-                         message : "image uploaded sussesfull",  
-                    data:urls
-               })
-          }
-               
-                else{
+               //           message : "image uploaded sussesfull",  
+               //               data:urls
+               // })
 
-                    res.status(400).json({
-                         err: " image not uploaded"
+                    const product = new productSchema ({
+                      productName,
+                      discription,
+                      price,
+                      category,
+                      images:  urls
+                 
                     })
-                }
-
-
-
-                  //  const files = req.files.images
-                 //  cloudinary.uploader.upload(files.tempFilePath,(err,result)=>{
-
-                  //      console.log("results",result)
-    
-
-               //    **************Cloudinar uploading **********
-
-          //    cloudinary.uploader.upload(req.file.path,async (err,result)=>{
-
-
-                    // if(err)
-                    // {
-
-                    //    console.log("clodinary error",err)
-                    //    return res.status(500).json({error:"Error uploading to cloudinary"})
-                    // }
-
-                    //   res.status(200).json({url:req.url})
-
-                    // console.log("results",result)
-
-                    // const product = new productSchema ({
-                    //   productName,
-                    //   discription,
-                    //   price,
-                    //   category,
-                    //   images:  result.secure_url
                  
-                    // })
-                 
-                    // await product.save()
+                    await product.save()
                       
-                    //   res.json({
-                    //        status:'success',
-                    //        message:"product created",
-                    //        data:product
-                    //   })
-          // })
+                      res.json({
+                         message : "image uploaded sussesfull",  
+                          urldata:urls,
+                           status:'success',
+                           message:"product created",
+                             data:product
+                      })
 
-     //************adding multiple images ***********/
+                    }
+               
+                    else{
+    
+                        res.status(400).json({
+                             err: " image not uploaded"
+                        })
+                    }          
 
-
-          //    const images = req.files.map(({path , originalname}) => ({path , originalname}))
-          
-     //  })
-     // console.log(files)
    }
 
-
-          
 
           catch(err){
 
