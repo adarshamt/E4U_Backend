@@ -7,12 +7,15 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const morgan = require('morgan')
 
-const fileUpload = require('express-fileupload') 
+const fileUpload = require('express-fileupload')
+
+const product = require ('./model/productSchema')
 
 
 app.use(cors())
 app.use(express.json())
-app.use(morgan('dev'))
+app.use(express.urlencoded())
+app.use(morgan('dev')) 
 
 
 // app.use(fileUpload({
@@ -35,8 +38,10 @@ mongoose
 
   
 
-  // app.get("/upload",(req,res)=>{
-  //   res.render("image upload")
+  // app.get("/products",async(req,res)=>{
+  //   const productData = await product.find()
+  //   res.json(productData)
+     
   // })
 
   const userRouter= require('./routes/userRoutes')
@@ -46,7 +51,7 @@ mongoose
   const storeRouter = require('./routes/storeRoutes')
   app.use(storeRouter)
 
-  const productRouter = require('./model/productSchema')
+  const productRouter = require('./routes/productRouter')
   app.use(productRouter)
 
 

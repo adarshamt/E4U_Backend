@@ -1,5 +1,6 @@
 const productSchema = require("../model/productSchema")
 
+
  const cloudinary = require('../Cloudinary/cloudinary')
 
 const fs = require('fs')
@@ -9,17 +10,22 @@ const fs = require('fs')
 
 const addproduct = async (req,res)=>
 
+     // console.log("req file",typeof (req.file))
      {
           let urls= []
 
         try{
                const {productName,discription,price,category} = req.body
-                 console.log("product name",productName)
+
+                console.log("product name :" ,productName)
+
+                 console.log("front req files", req.files)
+
 
 
                  const uploader = async ( path)=> await cloudinary.uploads(path,'images')
-                 if ( req.method == "POST"){
 
+                       if ( req.method == "POST"){
                     
                     const files = req.files
                     
@@ -52,7 +58,7 @@ const addproduct = async (req,res)=>
                       
                       res.json({
                          message : "image uploaded sussesfull",  
-                          urldata:urls,
+                          
                            status:'success',
                            message:"product created",
                              data:product
@@ -78,6 +84,17 @@ const addproduct = async (req,res)=>
 }
 
 
+// *************** get the product data ***************
+
+const products = async(req,res) =>{
+
+  console.log("product ")
+  const all_data = await productSchema.find()
+  res.json(all_data)
+
+}
 
 
-module.exports ={addproduct}
+
+
+module.exports ={addproduct,products}

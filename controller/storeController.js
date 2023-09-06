@@ -10,7 +10,7 @@ const storeRegistration = async (req,res)=>{
 
      const {storeName,username,phone,email,password,address,location}=req.body
 
-
+      
 
      const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,password:password,address:address,location:location })
       await newStore.save()
