@@ -1,38 +1,57 @@
 const store = require('../model/storeSchema')
 
+ const cloudinary = require('../Cloudinary/cloudinary')
+
+const fs = require('fs')
+
+
 
 
 const storeRegistration = async (req,res)=>{
 
 
    try{
+    const url =[]
 
 
-     const {storeName,username,phone,email,password,address,location}=req.body
+     const {storeName,username,phone,email,password,address,location,category}=req.body
+
+     const uploader = async ( path)=> await cloudinary.uploads(path,'images')
+     const file = req.file
+     console.log("req file",file)
+
+    //  const { path } = file
+    //  console.log("path",path)
+
+    //  const newPath = await uploader(path)
+
+    //  console.log("new path :",newPath)
+                         
+    //  url.push(newPath)
+     
+    //  fs.unlinkSync(path)
+
 
       
 
-     const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,password:password,address:address,location:location })
-      await newStore.save()
+    //  const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,
+    //   password:password,address:address,location:location,category:category,image:url })
+
+    //  console.log("front req files", req.file)
+         
 
 
-      res.status(200).json
-      ({
-        status :'success',
-        message:" user registred successfully"
+      // await newStore.save()
 
-      })
 
-     const body =
-      { 
-        storeName,
-        username,
-        phone,
-        email,
-        password,
-        address,        
-        location
-    }
+      // res.status(200).json
+      // ({
+      //   status :'success',
+      //   message:" user registred successfully"
+
+      // })
+
+    
 
 
    }
@@ -50,6 +69,8 @@ const storeRegistration = async (req,res)=>{
      }
 
 }
+
+// **************** Store Login ******************
 
 
 const storeLogin =()=>{
