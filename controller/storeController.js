@@ -15,7 +15,8 @@ const storeRegistration = async (req,res)=>{
 
 
      const {storeName,username,phone,email,password,address,location,category}=req.body
-
+         
+     
      const uploader = async ( path)=> await cloudinary.uploads(path,'images')
      const file = req.file
      console.log("req file",file)
