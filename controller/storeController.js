@@ -20,39 +20,37 @@ const storeRegistration = async (req,res)=>{
      const file = req.file
      console.log("req file",file)
 
-    //  const { path } = file
-    //  console.log("path",path)
+     const { path } = file
+     console.log("path",path)
 
-    //  const newPath = await uploader(path)
+     const newPath = await uploader(path)
 
-    //  console.log("new path :",newPath)
+     console.log("new path :",newPath)
                          
-    //  url.push(newPath)
+     url.push(newPath)
      
-    //  fs.unlinkSync(path)
+     fs.unlinkSync(path)
+     console.log("url array",url)
 
 
       
 
-    //  const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,
-    //   password:password,address:address,location:location,category:category,image:url })
+     const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,
+      password:password,address:address,location:location,category:category,image:url })
 
-    //  console.log("front req files", req.file)
+     console.log("newStore", newStore)
          
 
 
-      // await newStore.save()
+      await newStore.save()
 
 
-      // res.status(200).json
-      // ({
-      //   status :'success',
-      //   message:" user registred successfully"
+      res.status(200).json
+      ({
+        status :'success',
+        message:" user registred successfully"
 
-      // })
-
-    
-
+      })
 
    }
 
