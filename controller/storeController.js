@@ -13,10 +13,8 @@ const storeRegistration = async (req,res)=>{
    try{
     const url =[]
 
-
      const {storeName,username,phone,email,password,address,location,category}=req.body
-         
-     
+      
      const uploader = async ( path)=> await cloudinary.uploads(path,'images')
      const file = req.file
      console.log("req file",file)
@@ -33,18 +31,12 @@ const storeRegistration = async (req,res)=>{
      fs.unlinkSync(path)
      console.log("url array",url)
 
-
-      
-
      const newStore = new store ({ storeName:storeName,username:username,phoneNumber:phone,email:email,
       password:password,address:address,location:location,category:category,image:url })
 
      console.log("newStore", newStore)
-         
-
-
+      
       await newStore.save()
-
 
       res.status(200).json
       ({
@@ -77,6 +69,14 @@ const storeLogin =()=>{
   const {email,password} = req.body
 
 }
+// ******************* Get all the stores ***************
+
+const storeslist = async(req,res)=>{
 
 
-module.exports={storeRegistration}
+  const store_data = await store.find()
+   res.json(store_data)
+}
+
+
+module.exports={storeRegistration,storeslist}
