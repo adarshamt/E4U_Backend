@@ -4,6 +4,7 @@ const user = require('../model/userSchema')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
+const { link } = require('../routes/storeRoutes')
 
 
 
@@ -87,7 +88,7 @@ const login = async(req,res) =>{
       
    })
 
-
+   
 }
 
 

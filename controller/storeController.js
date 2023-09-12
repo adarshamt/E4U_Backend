@@ -4,6 +4,8 @@ const store = require('../model/storeSchema')
 
 const fs = require('fs')
 
+const jwt = require('jsonwebtoken')
+
 
 
 
@@ -64,9 +66,34 @@ const storeRegistration = async (req,res)=>{
 // **************** Store Login ******************
 
 
-const storeLogin =()=>{
+const storeLogin = async(req,res)=>{
 
   const {email,password} = req.body
+
+  console.log("email :",email,"passsword :",password)
+
+   const checkStore = await store.findOne({email:email})
+
+   console.log(" store check :",checkStore )
+   if(!checkStore){
+
+    return res.status(404).json({
+      status:"faliure",
+      message:"invalid email",
+      
+  })
+   }
+   const token = jwt.sign({email:store.email},'adarsh')
+    res.json({
+        
+        status:"success",
+        message:"successfully",
+        email:email,
+        token:token
+      
+   })
+
+
 
 }
 // ******************* Get all the stores ***************
@@ -79,4 +106,4 @@ const storeslist = async(req,res)=>{
 }
 
 
-module.exports={storeRegistration,storeslist}
+module.exports={storeRegistration,storeLogin,storeslist}
