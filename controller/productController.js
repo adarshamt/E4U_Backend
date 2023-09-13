@@ -15,7 +15,7 @@ const addproduct = async (req,res)=>
           let urls= []
 
         try{
-               const {productName,discription,price,category} = req.body
+               const {productName,discription,price,category,id} = req.body
 
                 console.log("product name :" ,productName)
 
@@ -50,6 +50,7 @@ const addproduct = async (req,res)=>
                       discription,
                       price,
                       category,
+                      id,
                       images:  urls
                  
                     })
@@ -94,7 +95,25 @@ const products = async(req,res) =>{
 
 }
 
+const viewProduct = async (req,res)=>{
+
+  const id= req.params.id
+  console.log(" id :",id)
+
+   
+  const product = await productSchema.findById(id)
+
+  res.json({
+
+     message:' successs',
+     data:product,
+     image:product.images[0]
+
+  })
+
+  console.log('selected product :',product)
+}
 
 
 
-module.exports ={addproduct,products}
+module.exports ={addproduct,products,viewProduct}

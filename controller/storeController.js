@@ -74,7 +74,8 @@ const storeLogin = async(req,res)=>{
 
    const checkStore = await store.findOne({email:email})
 
-   console.log(" store check :",checkStore )
+   console.log(" store check  :",checkStore )
+
    if(!checkStore){
 
     return res.status(404).json({
@@ -88,7 +89,7 @@ const storeLogin = async(req,res)=>{
         
         status:"success",
         message:"successfully",
-        email:email,
+        store:checkStore,
         token:token
       
    })
