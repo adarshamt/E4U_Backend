@@ -91,7 +91,23 @@ const products = async(req,res) =>{
 
   console.log("product ")
   const all_data = await productSchema.find()
-  res.json(all_data)
+    //  const {category,discription,price,productName,_id,images}=all_data
+
+    //  const res_data ={
+    //   category,
+    //   discription,
+    //   price,
+    //   productName,
+    //   _id,
+    //   image:images[0].url
+      
+    //  }
+     console.log("res_data :",all_data)
+
+   res.json({
+    data:all_data
+   })
+
 
 }
 
