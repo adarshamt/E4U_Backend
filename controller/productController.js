@@ -15,9 +15,9 @@ const addproduct = async (req,res)=>
           let urls= []
 
         try{
-               const {productName,discription,price,category,id} = req.body
+               const {productName,discription,price,category,store_id} = req.body
 
-                console.log("product name :" ,productName)
+                console.log("Store id :" ,store_id)
 
                  console.log("front req files", req.files)
 
@@ -50,7 +50,7 @@ const addproduct = async (req,res)=>
                       discription,
                       price,
                       category,
-                      id,
+                      store_id,
                       images:  urls
                  
                     })
@@ -130,6 +130,21 @@ const viewProduct = async (req,res)=>{
   console.log('selected product :',product)
 }
 
+// **********get single store products*********
+
+const viewStoreProducts = async (req,res)=>{
+const id = req.params.id
+
+const product = await productSchema.find(id)
+
+res.json9({
+
+  message:"success",
+  data:product
+})
 
 
-module.exports ={addproduct,products,viewProduct}
+}
+
+
+module.exports ={addproduct,products,viewProduct,viewStoreProducts}
