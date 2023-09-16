@@ -58,10 +58,12 @@ const userRegistraion= async(req,res)=>{
 const login = async(req,res) =>{
     const {email,password} = req.body
 
-    const chechUser = await user.findOne({email:email})
-    console.log(chechUser)
+    const checkUser = await user.findOne({email:email})
+    console.log(checkUser)
+    const user_id = checkUser._id
+    console.log(user_id,"----------user id")
 
-    if(! chechUser){
+    if(! checkUser){
         return res.status(404).json({
             status:"faliure",
             message:"invalid email",
@@ -69,7 +71,7 @@ const login = async(req,res) =>{
         })
    
     }
-   if(!await bcrypt.compare(password,chechUser.password)){
+   if(! bcrypt.compare(password,checkUser.password)){
 
       
     return res.status(404).json({
@@ -84,16 +86,27 @@ const login = async(req,res) =>{
         status:"success",
         message:"successfully",
         email:email,
-        token:token
+        token:token,
+        user_id
       
    })
 
    
 }
 
+// ************ add to cart *****************
+
+const addToCart = async(req,res)=>{
+  
+    const { user_id,product_id}=req.body
+
+    console.log(" user id :",user_id," product id :",product_id,"+++++++++++++++++++")
+
+}
 
 
 
 
-module.exports={userRegistraion,login}
+
+module.exports={userRegistraion,login,addToCart}
     

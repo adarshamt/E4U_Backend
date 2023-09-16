@@ -105,6 +105,8 @@ const storeslist = async(req,res)=>{
 
 
   const store_data = await store.find()
+
+
    res.json(store_data)
 }
 

@@ -1,4 +1,5 @@
 const productSchema = require("../model/productSchema")
+const storeSchema = require('../model/storeSchema')
 
 
  const cloudinary = require('../Cloudinary/cloudinary')
@@ -101,8 +102,7 @@ const products = async(req,res) =>{
     //   _id,
     //   image:images[0].url
       
-    //  }
-     console.log("res_data :",all_data)
+
 
    res.json({
     data:all_data
@@ -119,10 +119,13 @@ const viewProduct = async (req,res)=>{
    
   const product = await productSchema.findById(id)
 
+  console.log("----------- product",product)
+
   res.json({
 
      message:' successs',
      data:product,
+    
      image:product.images[0]
 
   })
@@ -133,13 +136,20 @@ const viewProduct = async (req,res)=>{
 // **********get single store products*********
 
 const viewStoreProducts = async (req,res)=>{
-const id = req.params.id
+const {id} = req.query
 
-const product = await productSchema.find(id)
+console.log(" store id :",id)
 
-res.json9({
+const product = await productSchema.find({store_id:id})
+const store = await storeSchema.findById(id)
+
+
+console.log(" store products :", product[0])
+
+res.json({
 
   message:"success",
+  store:store,
   data:product
 })
 

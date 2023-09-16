@@ -14,7 +14,7 @@ router.post("/store/addproduct",upload.array('images',5),addproduct)
 
 router.get('/products',products)
 router.get('/product/view/:id',viewProduct)
-router.get('/store/products/:id',viewStoreProducts)
+router.get('/store/products',viewStoreProducts)
 
 
 module.exports =router
