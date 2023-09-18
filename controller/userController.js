@@ -120,6 +120,7 @@ const listCart = async (req,res)=>{
     const User = await user.findById(id)
       
     let items =[]
+    if (User.cart.length >0){
     for ( itm of User.cart){
      
     const item = await product.findById(itm)
@@ -127,7 +128,7 @@ const listCart = async (req,res)=>{
      items.push(item)
     }
 
-    res.json({
+   return res.json({
           status:200,
         message : " prduct listed successfully",
         products:items
@@ -136,6 +137,49 @@ const listCart = async (req,res)=>{
 
     console.log("+++++++++++++++++++ prodcuts array :",items)
 
+  }
+  res.json({
+    status:404,
+  message : " cart is empty",
+  
+
+})
+
 }
 
-module.exports = { userRegistraion, login, addToCart,listCart };
+const removeItemfromCart = async (req,res)=>{
+
+  
+  try{
+    const { user_id,product_id}=req.body
+    console.log("**********user id :",user_id," ----------- product id :",product_id)
+
+  const newuser = await user.findById(user_id)
+ const index= newuser.cart.indexOf(product_id)
+  if (index === -1) {
+    return res.status(404).json({ message: "Product not found in Cart" });
+  }
+
+  newuser.cart.splice(index,1)
+
+  await newuser.save()
+
+  
+  console.log(" prodcut removed successfully")
+  console.log(" ------------- new cart",  newuser.cart)
+  res.json({
+
+    status:200,
+    cart :  newuser.cart
+  })
+   
+  }
+  catch(err){
+
+    console.log(" remove item error",err)
+  }
+
+
+}
+
+module.exports = { userRegistraion, login, addToCart,listCart,removeItemfromCart };
