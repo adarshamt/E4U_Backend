@@ -119,7 +119,7 @@ const viewProduct = async (req,res)=>{
    
   const product = await productSchema.findById(id)
 
-  console.log("----------- product",product)
+  
 
   res.json({
 

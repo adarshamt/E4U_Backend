@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const { link } = require("../routes/storeRoutes");
 const { json } = require("express");
 
+const stripe = require('stripe')(process.env.Secret_key)
+
 const userRegistraion = async (req, res) => {
   try {
     //  console.log("req files",req.file)
@@ -128,10 +130,18 @@ const listCart = async (req,res)=>{
      items.push(item)
     }
 
+    console.log("items ",items)
+    const totalSum =  items.reduce((sum,item) => {
+      return sum + item.price
+     },0);
+
+     console.log("++++++++++++total sum+++++++++",totalSum)
+
    return res.json({
           status:200,
         message : " prduct listed successfully",
-        products:items
+        products:items,
+        total:totalSum
 
     })
 
@@ -182,4 +192,32 @@ const removeItemfromCart = async (req,res)=>{
 
 }
 
-module.exports = { userRegistraion, login, addToCart,listCart,removeItemfromCart };
+// ***************** add to wishlist *************
+
+const addtowishlist = async(req,res)=>{
+
+  const { user_id,product_id}=req.body
+
+  console.log(" user : ",user_id,"product id :",product_id)
+
+   
+
+}
+
+// **********ashow the wish list**********
+
+const showwishlist = async(req,res)=>{
+
+  const user_id = req.params
+
+}
+
+// ***************** Make payment *******************
+
+
+const makePyment = async (req,res)=>{
+
+  const {user_id}= req.body
+
+}
+module.exports = { userRegistraion, login, addToCart,listCart,removeItemfromCart,makePyment,addtowishlist,showwishlist };

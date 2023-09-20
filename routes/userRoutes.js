@@ -15,6 +15,11 @@ router.post('/user/addtocart',user.addToCart)
 router.get('/user/cart/products',user.listCart)
 router.post('/user/removefromcart',user.removeItemfromCart)
 
+router.post('/user/addtowishlist',user.addtowishlist)
+router.get('/user/wishlist',user.showwishlist)
+
+router.post('/user/makepayment',user.makePyment)
+
 
 
 
