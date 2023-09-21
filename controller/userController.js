@@ -1,13 +1,11 @@
 const user = require("../model/userSchema");
-const product = require("../model/productSchema")
+const product = require("../model/productSchema");
 
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 const { link } = require("../routes/storeRoutes");
 const { json } = require("express");
-
-const stripe = require('stripe')(process.env.Secret_key)
 
 const userRegistraion = async (req, res) => {
   try {
@@ -88,25 +86,20 @@ const addToCart = async (req, res) => {
 
     const User = await user.findById(user_id);
 
-    
-      if (!User.cart.includes(product_id)) {
-        User.cart.push(product_id);
-        await User.save();
+    if (!User.cart.includes(product_id)) {
+      User.cart.push(product_id);
+      await User.save();
 
-       return res.json({
-          status: 200,
-          message: "add to cart successfull",
-        });
-      } else {
-
-        return res.json({
-
-            status :200,
-            message:" product alredy present in cart"
-        })
-        
-      }
-    
+      return res.json({
+        status: 200,
+        message: "add to cart successfull",
+      });
+    } else {
+      return res.json({
+        status: 200,
+        message: " product alredy present in cart",
+      });
+    }
   } catch (err) {
     res.json({
       message: "failed to addcart",
@@ -115,109 +108,198 @@ const addToCart = async (req, res) => {
   }
 };
 
-const listCart = async (req,res)=>{
-  
-    const {id} = req.query
+const listCart = async (req, res) => {
+  const { id } = req.query;
 
-    const User = await user.findById(id)
-      
-    let items =[]
-    if (User.cart.length >0){
-    for ( itm of User.cart){
-     
-    const item = await product.findById(itm)
+  const User = await user.findById(id);
 
-     items.push(item)
+  let items = [];
+  if (User.cart.length > 0) {
+    for (itm of User.cart) {
+      const item = await product.findById(itm);
+
+      items.push(item);
     }
 
-    console.log("items ",items)
-    const totalSum =  items.reduce((sum,item) => {
-      return sum + item.price
-     },0);
+    console.log("items ", items);
+    const totalSum = items.reduce((sum, item) => {
+      return sum + item.price;
+    }, 0);
 
-     console.log("++++++++++++total sum+++++++++",totalSum)
+    console.log("++++++++++++total sum+++++++++", totalSum);
 
-   return res.json({
-          status:200,
-        message : " prduct listed successfully",
-        products:items,
-        total:totalSum
+    return res.json({
+      status: 200,
+      message: " prduct listed successfully",
+      products: items,
+      total: totalSum,
+    });
 
-    })
-
-    console.log("+++++++++++++++++++ prodcuts array :",items)
-
+    console.log("+++++++++++++++++++ prodcuts array :", items);
   }
   res.json({
-    status:404,
-  message : " cart is empty",
-  
+    status: 404,
+    message: " cart is empty",
+  });
+};
 
-})
+const removeItemfromCart = async (req, res) => {
+  try {
+    const { user_id, product_id } = req.body;
+    console.log(
+      "**********user id :",
+      user_id,
+      " ----------- product id :",
+      product_id
+    );
 
-}
+    const newuser = await user.findById(user_id);
+    const index = newuser.cart.indexOf(product_id);
+    if (index === -1) {
+      return res.status(404).json({ message: "Product not found in Cart" });
+    }
 
-const removeItemfromCart = async (req,res)=>{
+    newuser.cart.splice(index, 1);
 
-  
-  try{
-    const { user_id,product_id}=req.body
-    console.log("**********user id :",user_id," ----------- product id :",product_id)
+    await newuser.save();
 
-  const newuser = await user.findById(user_id)
- const index= newuser.cart.indexOf(product_id)
-  if (index === -1) {
-    return res.status(404).json({ message: "Product not found in Cart" });
+    console.log(" prodcut removed successfully");
+    console.log(" ------------- new cart", newuser.cart);
+    res.json({
+      status: 200,
+      cart: newuser.cart,
+    });
+  } catch (err) {
+    console.log(" remove item error", err);
   }
-
-  newuser.cart.splice(index,1)
-
-  await newuser.save()
-
-  
-  console.log(" prodcut removed successfully")
-  console.log(" ------------- new cart",  newuser.cart)
-  res.json({
-
-    status:200,
-    cart :  newuser.cart
-  })
-   
-  }
-  catch(err){
-
-    console.log(" remove item error",err)
-  }
-
-
-}
+};
 
 // ***************** add to wishlist *************
 
-const addtowishlist = async(req,res)=>{
+const addtowishlist = async (req, res) => {
+  const { user_id, product_id } = req.body;
 
-  const { user_id,product_id}=req.body
+  console.log(" user : ", user_id, "product id :", product_id);
+  try {
+    const User = await user.findById(user_id);
+    console.log("************ User *******", User);
+    User.wishlist.push(product_id);
+    await User.save();
+  } catch (error) {
+    console.log("error", error);
+  }
+};
 
-  console.log(" user : ",user_id,"product id :",product_id)
+// **********show  wish list**********
 
-   
+const showwishlist = async (req, res) => {
+  const { user_id } = req.query;
 
-}
+  console.log(" user id ++++++++++++++", user_id);
 
-// **********ashow the wish list**********
+  try {
+    const User = await user.findById(user_id);
 
-const showwishlist = async(req,res)=>{
+    console.log(" ////////////// User //////////////", User);
+    const Wishlist = User.wishlist;
+    console.log(" +++++++++++++ wishlist ++++++++++", Wishlist);
 
-  const user_id = req.params
+    console.log("wishlis length _________-----", Wishlist.length);
 
-}
+    let items = [];
+    if (Wishlist.length > 0) {
+      for (const item of Wishlist) {
+        const Product = await product.findById(item);
+
+        items.push(Product);
+      }
+    }
+
+    res.json({
+      status: 200,
+      message: "success",
+      products: items,
+    });
+  } catch (error) {
+    res.json({
+      status: 400,
+      message: "failiur",
+    });
+    console.log(" error ", error);
+  }
+};
+// ************Remove from wishlist ****************
+const removeFromWishlist = async (req, res) => {
+  console.log("------------------REMOVE FROM WISHLIST ------------------");
+
+  const { user_id, product_id } = req.body;
+
+  console.log(" user : ", user_id, "product id :", product_id);
+
+
+
+  try {
+    const User = await user.findById(user_id);
+    if (!User) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("User.wishlist ------------------",User.wishlist)
+
+    User.wishlist = User.wishlist.filter((item) => item != product_id);
+
+    await User.save();
+
+    console.log("Updated User:", User);
+    res.status(200).json({ message: "Product removed from wishlist" });
+  } catch (error) {
+    console.error("Error removing product from wishlist:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 // ***************** Make payment *******************
 
+const makePyment = async (req, res) => {
+  const { user_id } = req.body;
+};
 
-const makePyment = async (req,res)=>{
 
-  const {user_id}= req.body
+//  **************** fetch all users *****************
 
+const fetchAllUsers = async (req,res)=>{
+  console.log(" ************** fetch all users **************")
+
+  try {
+    const Users = await user.find()
+
+    res.json({
+
+      message:'success',
+      Users : Users
+    })
+
+
+  } catch (error) {
+     
+    res.json({
+
+      message: failiur,
+
+    })
+    console.log(" error",error)
+    
+  }
 }
-module.exports = { userRegistraion, login, addToCart,listCart,removeItemfromCart,makePyment,addtowishlist,showwishlist };
+module.exports = {
+  userRegistraion,
+  login,
+  addToCart,
+  listCart,
+  removeItemfromCart,
+  makePyment,
+  addtowishlist,
+  showwishlist,
+  removeFromWishlist,
+  fetchAllUsers
+};
