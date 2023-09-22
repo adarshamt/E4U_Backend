@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 const { link } = require("../routes/storeRoutes");
-const { json } = require("express");
+const { json, response } = require("express");
 
 const userRegistraion = async (req, res) => {
   try {
@@ -236,15 +236,13 @@ const removeFromWishlist = async (req, res) => {
 
   console.log(" user : ", user_id, "product id :", product_id);
 
-
-
   try {
     const User = await user.findById(user_id);
     if (!User) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User.wishlist ------------------",User.wishlist)
+    console.log("User.wishlist ------------------", User.wishlist);
 
     User.wishlist = User.wishlist.filter((item) => item != product_id);
 
@@ -264,33 +262,50 @@ const makePyment = async (req, res) => {
   const { user_id } = req.body;
 };
 
-
 //  **************** fetch all users *****************
 
-const fetchAllUsers = async (req,res)=>{
-  console.log(" ************** fetch all users **************")
+const fetchAllUsers = async (req, res) => {
+  console.log(" ************** fetch all users **************");
 
   try {
-    const Users = await user.find()
+    const Users = await user.find();
 
     res.json({
+      message: "success",
+      Users: Users,
+    });
+  } catch (error) {
+    res.json({
+      message: failiur,
+    });
+    console.log(" error", error);
+  }
+};
 
-      message:'success',
-      Users : Users
+const deleteUser = async (req, res) => {
+  console.log("---------------------- delete user ---------------");
+
+  const { user_id } = req.body;
+
+  console.log(" user id ---------", user_id);
+  try {
+    const Users = await user.findByIdAndDelete(user_id);
+    if (!Users) {
+      return res.status(404).json({ message: "No Users " });
+    }
+
+    
+    res.json({
+    status :200,
+    message:'user removed successfully'
+
     })
-
 
   } catch (error) {
-     
-    res.json({
-
-      message: failiur,
-
-    })
-    console.log(" error",error)
-    
-  }
+  console.log(" error deleting user",error)
+  };
 }
+
 module.exports = {
   userRegistraion,
   login,
@@ -301,5 +316,6 @@ module.exports = {
   addtowishlist,
   showwishlist,
   removeFromWishlist,
-  fetchAllUsers
+  fetchAllUsers,
+  deleteUser,
 };
