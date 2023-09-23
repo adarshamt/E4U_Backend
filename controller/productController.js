@@ -88,28 +88,70 @@ const addproduct = async (req,res)=>
 
 // *************** get the product data ***************
 
-const products = async(req,res) =>{
+// const products = async(req,res) =>{
 
-  console.log("product ")
-  const all_data = await productSchema.find()
-    //  const {category,discription,price,productName,_id,images}=all_data
+  
+//   const all_data = await productSchema.find()
+//      const {store_id}=all_data
 
-    //  const res_data ={
-    //   category,
-    //   discription,
-    //   price,
-    //   productName,
-    //   _id,
-    //   image:images[0].url
+//     //  console.log(all_data,"-----------------------")
+     
+//     const stores =[]
+
+//      for ( itm of all_data){
+
+//        console.log("-----------------",itm)
+       
+//        const response = await storeSchema.findById(itm.store_id)
+
+//       //  console.log("++++++++++++++++++++++ loopo store details +++++++++++++",response)
+//         stores.push(response.storName)
+//       // itm.StoreName=response.storName
+//       }
+//       // console.log(" data fter append ------------------",all_data)
+       
+//       for (i =0;i< all_data.length ;i++){
+
+//         all_data[i].storeName =stores[i]
+//       }
+
+//       console.log(" after insertion *******************",all_data)
       
+   
+
+//    res.json({
+//     data:all_data,
+    
+//    })
 
 
-   res.json({
-    data:all_data
-   })
+// }
+// ************************ gpt products ***********************
+const products = async (req, res) => {
+  try {
+      const all_data = await productSchema.find();
+      const storeIds = all_data.map(item => item.store_id);
+      const storeResponses = await Promise.all(storeIds.map(id => storeSchema.findById(id)));
 
+      const stores = storeResponses.map(response => response.storName);
 
-}
+       console.log("stroes -------------" ,stores)
+
+      
+       all_data.forEach((itm,index)=>{
+        itm.store =stores[index]
+       })
+
+      //  console.log("************ all data ***********",all_data)
+      res.json({
+          data: all_data,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred' });
+  }
+};
+// ***********************************************************************************
 
 const viewProduct = async (req,res)=>{
 

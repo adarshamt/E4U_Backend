@@ -103,6 +103,8 @@ const storeLogin = async(req,res)=>{
 
 const storeslist = async(req,res)=>{
 
+  console.log("************** store list **********************")
+
 
   const store_data = await store.find()
 
