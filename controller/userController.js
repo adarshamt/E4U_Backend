@@ -108,12 +108,17 @@ const addToCart = async (req, res) => {
   }
 };
 
+// ********************* Cart ******************************
+
 const listCart = async (req, res) => {
   const { id } = req.query;
-
+  
+  if (id){
   const User = await user.findById(id);
 
   let items = [];
+
+  // console.log(" cart value-------------------",User.cart[0])
   if (User.cart.length > 0) {
     for (itm of User.cart) {
       const item = await product.findById(itm);
@@ -141,7 +146,15 @@ const listCart = async (req, res) => {
     status: 404,
     message: " cart is empty",
   });
-};
+}
+
+
+   
+
+
+}
+
+
 
 const removeItemfromCart = async (req, res) => {
   try {
@@ -180,14 +193,28 @@ const addtowishlist = async (req, res) => {
   const { user_id, product_id } = req.body;
 
   console.log(" user : ", user_id, "product id :", product_id);
-  try {
+  
+
     const User = await user.findById(user_id);
     console.log("************ User *******", User);
+    if (!User.wishlist.includes(product_id)) {
     User.wishlist.push(product_id);
-    await User.save();
-  } catch (error) {
-    console.log("error", error);
+    await User.save();    // add to set
+
+    return res.json({
+      status: 200,
+      message: " product added to wishlist",
+    });
+
+
   }
+  else {
+    return res.json({
+      status: 200,
+      message: " product alredy present in wishlist",
+    });
+  }
+ 
 };
 
 // **********show  wish list**********

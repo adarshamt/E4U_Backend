@@ -7,7 +7,8 @@ const productSchema = new mongoose.Schema({
     price:'Number',
     category:'String',
     Quantity:'String',
-    store_id:'String',
+    store_id:{ type:'String',
+               ref:'store'       }, //TODO: give releation ship to store using ref 
     images:[{}]
 
 

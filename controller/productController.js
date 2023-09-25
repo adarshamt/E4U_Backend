@@ -1,107 +1,82 @@
-const productSchema = require("../model/productSchema")
-const storeSchema = require('../model/storeSchema')
+const productSchema = require("../model/productSchema");
+const storeSchema = require("../model/storeSchema");
 
+const cloudinary = require("../Cloudinary/cloudinary");
 
- const cloudinary = require('../Cloudinary/cloudinary')
+const fs = require("fs");
 
-const fs = require('fs')
+const addproduct = async (req, res) =>
+  // console.log("req file",typeof (req.file))
+  {
+    let urls = [];
 
+    try {
+      const { productName, discription, price, category, store_id } = req.body;
 
+      console.log("Store id :", store_id);
 
+      console.log("front req files", req.files);
 
-const addproduct = async (req,res)=>
+      const uploader = async (path) => await cloudinary.uploads(path, "images");
 
-     // console.log("req file",typeof (req.file))
-     {
-          let urls= []
+      if (req.method == "POST") {
+        const files = req.files;
 
-        try{
-               const {productName,discription,price,category,store_id} = req.body
+        for (const file of files) {
+          const { path } = file;
+          console.log("paths", path);
 
-                console.log("Store id :" ,store_id)
+          const newPath = await uploader(path);
+          console.log("new path :", newPath);
 
-                 console.log("front req files", req.files)
+          urls.push(newPath);
 
+          fs.unlinkSync(path);
+        }
 
+        const product = new productSchema({
+          productName,
+          discription,
+          price,
+          category,
+          store_id,
+          images: urls,
+        });
 
-                 const uploader = async ( path)=> await cloudinary.uploads(path,'images')
+        await product.save();
 
-                       if ( req.method == "POST"){
-                    
-                    const files = req.files
-                    
-                    for ( const file of files ){
-                         
-                         const { path } = file
-                         console.log("paths",path)
-                         
-                       const newPath = await uploader(path)
-                         console.log("new path :",newPath)
-                         
-                         urls.push(newPath)
-                         
-                         fs.unlinkSync(path)
-                    }
+        res.json({
+          message: "image uploaded sussesfull",
 
-                    
-               
-
-                    const product = new productSchema ({
-                      productName,
-                      discription,
-                      price,
-                      category,
-                      store_id,
-                      images:  urls
-                 
-                    })
-                 
-                    await product.save()
-                      
-                      res.json({
-                         message : "image uploaded sussesfull",  
-                          
-                           status:'success',
-                           message:"product created",
-                             data:product
-                      })
-
-                    }
-               
-                    else{
-    
-                        res.status(400).json({
-                             err: " image not uploaded"
-                        })
-                    }          
-
-   }
-
-
-          catch(err){
-
-               console.log("error catched",err)
-          }
-     
-}
-
+          status: "success",
+          message: "product created",
+          data: product,
+        });
+      } else {
+        res.status(400).json({
+          err: " image not uploaded",
+        });
+      }
+    } catch (err) {
+      console.log("error catched", err);
+    }
+  };
 
 // *************** get the product data ***************
 
 // const products = async(req,res) =>{
 
-  
 //   const all_data = await productSchema.find()
 //      const {store_id}=all_data
 
 //     //  console.log(all_data,"-----------------------")
-     
+
 //     const stores =[]
 
 //      for ( itm of all_data){
 
 //        console.log("-----------------",itm)
-       
+
 //        const response = await storeSchema.findById(itm.store_id)
 
 //       //  console.log("++++++++++++++++++++++ loopo store details +++++++++++++",response)
@@ -109,94 +84,83 @@ const addproduct = async (req,res)=>
 //       // itm.StoreName=response.storName
 //       }
 //       // console.log(" data fter append ------------------",all_data)
-       
+
 //       for (i =0;i< all_data.length ;i++){
 
 //         all_data[i].storeName =stores[i]
 //       }
 
 //       console.log(" after insertion *******************",all_data)
-      
-   
 
 //    res.json({
 //     data:all_data,
-    
-//    })
 
+//    })
 
 // }
 // ************************ gpt products ***********************
 const products = async (req, res) => {
   try {
-      const all_data = await productSchema.find();
-      const storeIds = all_data.map(item => item.store_id);
-      const storeResponses = await Promise.all(storeIds.map(id => storeSchema.findById(id)));
+    const all_data = await productSchema.find().populate('store_id');
+    // const storeIds = all_data.map((item) => item.store_id);
+    // const storeResponses = await Promise.all(
+    //   storeIds.map((id) => storeSchema.findById(id))
+    // );
 
-      const stores = storeResponses.map(response => response.storName);
+    // const stores = storeResponses.map((response) => response.storName);
 
-       console.log("stroes -------------" ,stores)
+    // console.log("stroes -------------", stores);
+     
+    // all_data.forEach((itm, index) => {
+    //   all_data[index]['store'] = stores[index];
+    //   console.log(all_data[index])
+    // });
 
-      
-       all_data.forEach((itm,index)=>{
-        itm.store =stores[index]
-       })
-
-      //  console.log("************ all data ***********",all_data)
-      res.json({
-          data: all_data,
-      });
+    
+    //  console.log("************ all data ***********",all_data)
+    res.json({
+      data: all_data,
+    });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'An error occurred' });
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
   }
 };
 // ***********************************************************************************
 
-const viewProduct = async (req,res)=>{
+const viewProduct = async (req, res) => {
+  const id = req.params.id;
+  console.log(" id :", id);
 
-  const id= req.params.id
-  console.log(" id :",id)
-
-   
-  const product = await productSchema.findById(id)
-
-  
+  const product = await productSchema.findById(id);
 
   res.json({
+    message: " successs",
+    data: product,
 
-     message:' successs',
-     data:product,
-    
-     image:product.images[0]
+    image: product.images[0],
+  });
 
-  })
-
-  console.log('selected product :',product)
-}
+  console.log("selected product :", product);
+};
 
 // **********get single store products*********
 
-const viewStoreProducts = async (req,res)=>{
-const {id} = req.query
+const viewStoreProducts = async (req, res) => {
+  const { id } = req.query;
 
-console.log(" store id :",id)
+  console.log(" store id :", id);
 
-const product = await productSchema.find({store_id:id})
-const store = await storeSchema.findById(id)
+  const product = await productSchema.find({ store_id: id });
+  const store = await storeSchema.findById(id);
 
+  console.log(" store products :", product[0]);
 
-console.log(" store products :", product[0])
+  res.json({
+    message: "success",
+    store: store,
+    data: product,
+  });
+};
 
-res.json({
-
-  message:"success",
-  store:store,
-  data:product
-})
-
-
-}
-
-
-module.exports ={addproduct,products,viewProduct,viewStoreProducts}
+module.exports = { addproduct, products, viewProduct, viewStoreProducts };
