@@ -101,20 +101,10 @@ const addproduct = async (req, res) =>
 // ************************ gpt products ***********************
 const products = async (req, res) => {
   try {
+
+    const {user_id}=req.params
     const all_data = await productSchema.find().populate('store_id');
-    // const storeIds = all_data.map((item) => item.store_id);
-    // const storeResponses = await Promise.all(
-    //   storeIds.map((id) => storeSchema.findById(id))
-    // );
-
-    // const stores = storeResponses.map((response) => response.storName);
-
-    // console.log("stroes -------------", stores);
-     
-    // all_data.forEach((itm, index) => {
-    //   all_data[index]['store'] = stores[index];
-    //   console.log(all_data[index])
-    // });
+    
 
     
     //  console.log("************ all data ***********",all_data)

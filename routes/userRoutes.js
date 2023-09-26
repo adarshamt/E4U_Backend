@@ -22,7 +22,8 @@ router.post('/user/wishlistremoveitem',tryCatch(user.removeFromWishlist))
 router.get('/user/allusers',tryCatch(user.fetchAllUsers))
 router.post('/user/delteleuser',tryCatch(user.deleteUser))
 
-router.post('/user/makepayment',tryCatch(user.makePyment))
+
+router.post('/user/payment',tryCatch(user.payment))
 
 
 
