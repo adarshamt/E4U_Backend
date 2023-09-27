@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 
 const storeSchema =  new mongoose.Schema({
 
-    storName :'String',
+    storeName :'String',
     username:'String',
     category:'String',
     phoneNumber:'Number',

@@ -33,7 +33,7 @@ const storeRegistration = async (req,res)=>{
      fs.unlinkSync(path)
      console.log("url array",url)
 
-     const newStore = new store ({ storName:storename,username:username,phoneNumber:phone,email:email,
+     const newStore = new store ({ storeName:storename,username:username,phoneNumber:phone,email:email,
       password:password,address:address,location:location,category:category,image:url })
 
      console.log("newStore", newStore)
@@ -75,7 +75,7 @@ const storeLogin = async(req,res)=>{
    const checkStore = await store.findOne({email:email})
     
      const id = checkStore._id
-   console.log(" store id check  :",id)
+   console.log(" store check name --------------------  :",checkStore.storeName)
 
    if(!checkStore){
 
