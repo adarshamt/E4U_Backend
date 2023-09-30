@@ -7,6 +7,9 @@ const jwt = require("jsonwebtoken");
 const { link } = require("../routes/storeRoutes");
 const { json, response } = require("express");
 
+const Razorpay = require('razorpay')
+const crypto =require('crypto')
+
 const userRegistraion = async (req, res) => {
   try {
     //  console.log("req files",req.file)
@@ -286,24 +289,24 @@ const removeFromWishlist = async (req, res) => {
 
 // ***************** Make payment *******************
 
-const payment = async (req, res) => {
-  const { user_id } = req.body;
+// const payment = async (req, res) => {
+//   const { user_id } = req.body;
 
 
- // Create a PaymentIntent with the order amount and currency
- const paymentIntent = await stripe.paymentIntents.create({
-  amount: calculateOrderAmount(items),
-  currency: "inr",
-  // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-  automatic_payment_methods: {
-    enabled: true,
-  },
-});
+//  // Create a PaymentIntent with the order amount and currency
+//  const paymentIntent = await stripe.paymentIntents.create({
+//   amount: calculateOrderAmount(items),
+//   currency: "inr",
+//   // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+//   automatic_payment_methods: {
+//     enabled: true,
+//   },
+// });
 
-res.send({
-  clientSecret: paymentIntent.client_secret,
-});
-}
+// res.send({
+//   clientSecret: paymentIntent.client_secret,
+// });
+// }
 
 //  **************** fetch all users *****************
 
@@ -349,6 +352,67 @@ const deleteUser = async (req, res) => {
   };
 }
 
+
+const payment = async (req,res) => {
+
+  console.log(" key -------------------",process.env.key_secret)
+
+  const instance = new Razorpay({
+    key_id: process.env.key_id,
+    key_secret: process.env.key_secret,
+
+  });
+
+  
+  
+  
+  const options = {
+    amount: req.body.amount * 100,
+    currency: "INR",
+    receipt: crypto.randomBytes(10).toString("hex"),
+  };  
+  console.log(" options ************************",options)
+
+  instance.orders.create(options, (error, order) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Something Went Wrong!" });
+    }
+    res.status(200).json({ data: order });
+	});
+}
+
+const verifyPayment = async (req,res) => {
+
+  console.log("********************* verify payment **********************")
+
+   console.log(" req body ******************",req.body)
+ 
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+		const sign = razorpay_order_id + "|" + razorpay_payment_id;
+		const expectedSign = crypto
+			.createHmac("sha256", process.env.key_secret)
+			.update(sign.toString())
+			.digest("hex");
+
+		if (razorpay_signature === expectedSign) {
+			
+
+     
+
+
+      res.status(200).json({
+      status:"success",
+      message: "Payment verified successfully",
+      data:razorpay_order_id,
+      });
+		} else {
+      
+			return res.status(400).json({ message: "Invalid signature sent!" });
+		}
+}
+
 module.exports = {
   userRegistraion,
   login,
@@ -361,4 +425,5 @@ module.exports = {
   removeFromWishlist,
   fetchAllUsers,
   deleteUser,
+  verifyPayment
 };

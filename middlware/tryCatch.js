@@ -6,7 +6,7 @@ const tryCatch = (controller) => {
             // console.error(error.message)
             res.status(500).json({
                 status: "failure",
-                message: "something went wrong",
+                message: "something went wrong---------------------",
                 error_message: error.message
             })
         }
