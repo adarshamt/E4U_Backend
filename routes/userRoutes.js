@@ -24,7 +24,7 @@ router.post('/user/delteleuser',tryCatch(user.deleteUser))
 
 
 router.post('/user/payment',tryCatch(user.payment))
-router.post('/user/veryfypayment',tryCatch(user.verifyPayment))
+router.post('/user/veryfypayment/:id',tryCatch(user.verifyPayment))
 
 
 

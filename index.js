@@ -10,6 +10,8 @@ const morgan = require('morgan')
 const fileUpload = require('express-fileupload')
 
 const product = require ('./model/productSchema')
+require('dotenv').config();
+
 
 
 app.use(cors())
@@ -24,9 +26,11 @@ app.use(morgan('dev'))
   
 //   }))
 //TODO change to env
+ 
+const mongodb_url = process.env.mongo_url
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/E4U_DataBase", {  
+  .connect(mongodb_url, {  
     useNewUrlParser: true,
 
     useUnifiedTopology: true,
@@ -53,6 +57,10 @@ mongoose
 
   const productRouter = require('./routes/productRouter')
   app.use(productRouter)
+  
+  
+  const adminRouter = require('./routes/adminRoutes')
+  app.use(adminRouter)
 
 
 

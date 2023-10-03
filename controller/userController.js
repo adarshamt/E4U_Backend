@@ -386,7 +386,9 @@ const verifyPayment = async (req,res) => {
 
   console.log("********************* verify payment **********************")
 
-   console.log(" req body ******************",req.body)
+  const User_id = req.params.id
+
+   console.log(" req id ******************",User_id)
  
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
@@ -397,10 +399,13 @@ const verifyPayment = async (req,res) => {
 			.digest("hex");
 
 		if (razorpay_signature === expectedSign) {
+
+      const User = await user.findById(User_id)
+      
+        User.cart = []
+        User.save()
 			
-
-     
-
+      
 
       res.status(200).json({
       status:"success",
