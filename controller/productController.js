@@ -62,51 +62,12 @@ const addproduct = async (req, res) =>
     }
   };
 
-// *************** get the product data ***************
-
-// const products = async(req,res) =>{
-
-//   const all_data = await productSchema.find()
-//      const {store_id}=all_data
-
-//     //  console.log(all_data,"-----------------------")
-
-//     const stores =[]
-
-//      for ( itm of all_data){
-
-//        console.log("-----------------",itm)
-
-//        const response = await storeSchema.findById(itm.store_id)
-
-//       //  console.log("++++++++++++++++++++++ loopo store details +++++++++++++",response)
-//         stores.push(response.storName)
-//       // itm.StoreName=response.storName
-//       }
-//       // console.log(" data fter append ------------------",all_data)
-
-//       for (i =0;i< all_data.length ;i++){
-
-//         all_data[i].storeName =stores[i]
-//       }
-
-//       console.log(" after insertion *******************",all_data)
-
-//    res.json({
-//     data:all_data,
-
-//    })
-
-// }
 // ************************ gpt products ***********************
 const products = async (req, res) => {
   try {
+    const { user_id } = req.params;
+    const all_data = await productSchema.find().populate("store_id");
 
-    const {user_id}=req.params
-    const all_data = await productSchema.find().populate('store_id');
-    
-
-    
     //  console.log("************ all data ***********",all_data)
     res.json({
       data: all_data,
@@ -152,5 +113,23 @@ const viewStoreProducts = async (req, res) => {
     data: product,
   });
 };
+const removeproduct = async (req, res) => {
+  console.log(
+    " ********************* remove product function *******************"
+  );
 
-module.exports = { addproduct, products, viewProduct, viewStoreProducts };
+  const { product_id } = req.body;
+
+   await productSchema.findByIdAndDelete(product_id);
+  res.status(200).json({
+    message: " product removed  successsfully",
+  });
+};
+
+module.exports = {
+  addproduct,
+  products,
+  viewProduct,
+  viewStoreProducts,
+  removeproduct,
+};

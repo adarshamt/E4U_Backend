@@ -7,8 +7,8 @@ const jwt = require("jsonwebtoken");
 const { link } = require("../routes/storeRoutes");
 const { json, response } = require("express");
 
-const Razorpay = require('razorpay')
-const crypto =require('crypto')
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 
 const userRegistraion = async (req, res) => {
   try {
@@ -115,49 +115,42 @@ const addToCart = async (req, res) => {
 
 const listCart = async (req, res) => {
   const { id } = req.query;
-  
-  if (id){
-  const User = await user.findById(id);
 
-  let items = [];
+  if (id) {
+    const User = await user.findById(id);
 
-  // console.log(" cart value-------------------",User.cart[0])
-  if (User.cart.length > 0) {
-    for (itm of User.cart) {
-      const item = await product.findById(itm);
+    let items = [];
 
-      items.push(item);
+    // console.log(" cart value-------------------",User.cart[0])
+    if (User.cart.length > 0) {
+      for (itm of User.cart) {
+        const item = await product.findById(itm);
+
+        items.push(item);
+      }
+
+      console.log("items ", items);
+      const totalSum = items.reduce((sum, item) => {
+        return sum + item.price;
+      }, 0);
+
+      console.log("++++++++++++total sum+++++++++", totalSum);
+
+      return res.json({
+        status: 200,
+        message: " prduct listed successfully",
+        products: items,
+        total: totalSum,
+      });
+
+      console.log("+++++++++++++++++++ prodcuts array :", items);
     }
-
-    console.log("items ", items);
-    const totalSum = items.reduce((sum, item) => {
-      return sum + item.price;
-    }, 0);
-
-    console.log("++++++++++++total sum+++++++++", totalSum);
-
-    return res.json({
-      status: 200,
-      message: " prduct listed successfully",
-      products: items,
-      total: totalSum,
+    res.json({
+      status: 404,
+      message: " cart is empty",
     });
-
-    console.log("+++++++++++++++++++ prodcuts array :", items);
   }
-  res.json({
-    status: 404,
-    message: " cart is empty",
-  });
-}
-
-
-   
-
-
-}
-
-
+};
 
 const removeItemfromCart = async (req, res) => {
   try {
@@ -196,28 +189,23 @@ const addtowishlist = async (req, res) => {
   const { user_id, product_id } = req.body;
 
   console.log(" user : ", user_id, "product id :", product_id);
-  
 
-    const User = await user.findById(user_id);
-    console.log("************ User *******", User);
-    if (!User.wishlist.includes(product_id)) {
+  const User = await user.findById(user_id);
+  console.log("************ User *******", User);
+  if (!User.wishlist.includes(product_id)) {
     User.wishlist.push(product_id);
-    await User.save();    // add to set
+    await User.save(); // add to set
 
     return res.json({
       status: 200,
       message: " product added to wishlist",
     });
-
-
-  }
-  else {
+  } else {
     return res.json({
       status: 200,
       message: " product alredy present in wishlist",
     });
   }
- 
 };
 
 // **********show  wish list**********
@@ -249,7 +237,7 @@ const showwishlist = async (req, res) => {
       status: 200,
       message: "success",
       products: items,
-      ids:Wishlist
+      ids: Wishlist,
     });
   } catch (error) {
     res.json({
@@ -291,7 +279,6 @@ const removeFromWishlist = async (req, res) => {
 
 // const payment = async (req, res) => {
 //   const { user_id } = req.body;
-
 
 //  // Create a PaymentIntent with the order amount and currency
 //  const paymentIntent = await stripe.paymentIntents.create({
@@ -340,38 +327,29 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "No Users " });
     }
 
-    
     res.json({
-    status :200,
-    message:'user removed successfully'
-
-    })
-
+      status: 200,
+      message: "user removed successfully",
+    });
   } catch (error) {
-  console.log(" error deleting user",error)
-  };
-}
+    console.log(" error deleting user", error);
+  }
+};
 
-
-const payment = async (req,res) => {
-
-  console.log(" key -------------------",process.env.key_secret)
+const payment = async (req, res) => {
+  console.log(" key -------------------", process.env.key_secret);
 
   const instance = new Razorpay({
     key_id: process.env.key_id,
     key_secret: process.env.key_secret,
-
   });
 
-  
-  
-  
   const options = {
     amount: req.body.amount * 100,
     currency: "INR",
     receipt: crypto.randomBytes(10).toString("hex"),
-  };  
-  console.log(" options ************************",options)
+  };
+  console.log(" options ************************", options);
 
   instance.orders.create(options, (error, order) => {
     if (error) {
@@ -379,44 +357,40 @@ const payment = async (req,res) => {
       return res.status(500).json({ message: "Something Went Wrong!" });
     }
     res.status(200).json({ data: order });
-	});
-}
+  });
+};
 
-const verifyPayment = async (req,res) => {
+const verifyPayment = async (req, res) => {
+  console.log("********************* verify payment **********************");
 
-  console.log("********************* verify payment **********************")
+  const User_id = req.params.id;
 
-  const User_id = req.params.id
+  console.log(" req id ******************", User_id);
 
-   console.log(" req id ******************",User_id)
- 
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
 
-		const sign = razorpay_order_id + "|" + razorpay_payment_id;
-		const expectedSign = crypto
-			.createHmac("sha256", process.env.key_secret)
-			.update(sign.toString())
-			.digest("hex");
+  const sign = razorpay_order_id + "|" + razorpay_payment_id;
+  const expectedSign = crypto
+    .createHmac("sha256", process.env.key_secret)
+    .update(sign.toString())
+    .digest("hex");
 
-		if (razorpay_signature === expectedSign) {
+  if (razorpay_signature === expectedSign) {
+    const User = await user.findById(User_id);
+    User.order.push(User.cart);
+    User.cart = [];
+   await User.save();
 
-      const User = await user.findById(User_id)
-      
-        User.cart = []
-        User.save()
-			
-      
-
-      res.status(200).json({
-      status:"success",
+    res.status(200).json({
+      status: "success",
       message: "Payment verified successfully",
-      data:razorpay_order_id,
-      });
-		} else {
-      
-			return res.status(400).json({ message: "Invalid signature sent!" });
-		}
-}
+      data: razorpay_order_id,
+    });
+  } else {
+    return res.status(400).json({ message: "Invalid signature sent!" });
+  }
+};
 
 module.exports = {
   userRegistraion,
@@ -430,5 +404,5 @@ module.exports = {
   removeFromWishlist,
   fetchAllUsers,
   deleteUser,
-  verifyPayment
+  verifyPayment,
 };
