@@ -119,14 +119,18 @@ const listCart = async (req, res) => {
   if (id) {
     const User = await user.findById(id);
 
-    let items = [];
+    // const [items, setitems] = useState([])
+
+    let items =[]
 
     // console.log(" cart value-------------------",User.cart[0])
-    if (User.cart.length > 0) {
+    if (User.cart.length >= 0) {
       for (itm of User.cart) {
         const item = await product.findById(itm);
 
         items.push(item);
+        // setitems(item)
+        
       }
 
       console.log("items ", items);
@@ -275,25 +279,6 @@ const removeFromWishlist = async (req, res) => {
   }
 };
 
-// ***************** Make payment *******************
-
-// const payment = async (req, res) => {
-//   const { user_id } = req.body;
-
-//  // Create a PaymentIntent with the order amount and currency
-//  const paymentIntent = await stripe.paymentIntents.create({
-//   amount: calculateOrderAmount(items),
-//   currency: "inr",
-//   // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-//   automatic_payment_methods: {
-//     enabled: true,
-//   },
-// });
-
-// res.send({
-//   clientSecret: paymentIntent.client_secret,
-// });
-// }
 
 //  **************** fetch all users *****************
 

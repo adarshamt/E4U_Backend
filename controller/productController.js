@@ -83,7 +83,9 @@ const viewProduct = async (req, res) => {
   const id = req.params.id;
   console.log(" id :", id);
 
-  const product = await productSchema.findById(id);
+  const product = await productSchema.findById(id).populate('store_id');
+
+  
 
   res.json({
     message: " successs",
@@ -94,6 +96,7 @@ const viewProduct = async (req, res) => {
 
   console.log("selected product :", product);
 };
+
 
 // **********get single store products*********
 
