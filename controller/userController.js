@@ -133,10 +133,11 @@ const listCart = async (req, res) => {
         
       }
 
-      console.log("items ", items);
       const totalSum = items.reduce((sum, item) => {
+        
         return sum + item.price;
       }, 0);
+      
 
       console.log("++++++++++++total sum+++++++++", totalSum);
 
