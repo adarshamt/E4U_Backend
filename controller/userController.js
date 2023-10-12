@@ -16,7 +16,7 @@ const userRegistraion = async (req, res) => {
     const { name, username, phone, email, password, address, location } =
       req.body;
 
-    console.log("req name", name);
+    console.log("location", location  );
     console.log("req files", req.file);
 
     const hashedPassword = await bcrypt.hash(password, 10);
