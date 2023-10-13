@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email:'String',
     password:'String',
     address:'String',
-    location:'String',
+    location:{},
     images:[{}],
     cart:[{
 
