@@ -16,7 +16,7 @@ const userRegistraion = async (req, res) => {
     const { name, username, phone, email, password, address, location } =
       req.body;
 
-    console.log("req body ----------",req.body   );
+    console.log("req body ----------", req.body);
     // console.log("req files", req.file);
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -77,6 +77,7 @@ const login = async (req, res) => {
     message: "successfully",
     email: email,
     token: token,
+    User:checkUser,
     user_id,
   });
 };
@@ -119,40 +120,36 @@ const listCart = async (req, res) => {
   if (id) {
     const User = await user.findById(id);
 
-    // const [items, setitems] = useState([])
+    if (User.cart.length > 0) {
+      let items = [];
 
-    let items =[]
-
-    // console.log(" cart value-------------------",User.cart[0])
-    if (User.cart.length >= 0) {
-      for (itm of User.cart) {
-        const item = await product.findById(itm);
-
-        items.push(item);
-        // setitems(item)
-        
+      for (const cartItem of User.cart) {
+        const productItem = await product.findById(cartItem);
+        items.push(productItem);
       }
 
       const totalSum = items.reduce((sum, item) => {
-        
+        console.log("item price................", item.price);
+        console.log("item sum+++++++++++................", sum);
         return sum + item.price;
       }, 0);
-      
 
       console.log("++++++++++++total sum+++++++++", totalSum);
 
       return res.json({
         status: 200,
-        message: " prduct listed successfully",
+         message: "Products listed successfully",
         products: items,
         total: totalSum,
       });
+      
 
-      console.log("+++++++++++++++++++ prodcuts array :", items);
+      // console.log("+++++++++++++++++++ products array :", items);
     }
-    res.json({
+
+    return res.json({
       status: 404,
-      message: " cart is empty",
+      message: "Cart is empty",
     });
   }
 };
@@ -280,7 +277,6 @@ const removeFromWishlist = async (req, res) => {
   }
 };
 
-
 //  **************** fetch all users *****************
 
 const fetchAllUsers = async (req, res) => {
@@ -366,7 +362,7 @@ const verifyPayment = async (req, res) => {
     const User = await user.findById(User_id);
     User.order.push(User.cart);
     User.cart = [];
-   await User.save();
+    await User.save();
 
     res.status(200).json({
       status: "success",
