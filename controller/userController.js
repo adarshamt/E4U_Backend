@@ -129,12 +129,11 @@ const listCart = async (req, res) => {
       }
 
       const totalSum = items.reduce((sum, item) => {
-        console.log("item price................", item.price);
-        console.log("item sum+++++++++++................", sum);
+       
         return sum + item.price;
       }, 0);
 
-      console.log("++++++++++++total sum+++++++++", totalSum);
+      
 
       return res.json({
         status: 200,
@@ -149,6 +148,7 @@ const listCart = async (req, res) => {
 
     return res.json({
       status: 404,
+      products: [],
       message: "Cart is empty",
     });
   }
@@ -217,7 +217,9 @@ const showwishlist = async (req, res) => {
 
   console.log(" user id ++++++++++++++", user_id);
 
-  try {
+  if (user_id){
+
+
     const User = await user.findById(user_id);
 
     console.log(" ////////////// User //////////////", User);
@@ -241,12 +243,6 @@ const showwishlist = async (req, res) => {
       products: items,
       ids: Wishlist,
     });
-  } catch (error) {
-    res.json({
-      status: 400,
-      message: "failiur",
-    });
-    console.log(" error ", error);
   }
 };
 // ************Remove from wishlist ****************
